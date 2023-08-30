@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install required packages, set locale, and clean up
 RUN apt-get update && \
-    apt-get install -y curl unzip zip locales && \
+    apt-get install -y curl unzip zip locales git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
