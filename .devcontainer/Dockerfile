@@ -4,30 +4,26 @@ FROM openjdk:11-jdk-slim
 # Set environment variables to non-interactive (this prevents some prompts)
 ENV DEBIAN_FRONTEND=non-interactive
 
-# Install necessary packages and Kotlin
+# Install necessary packages
 RUN apt-get update && apt-get install -y \
     curl \
     unzip \
     sudo && \
-    curl -s https://get.sdkman.io | bash && \
-    bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk install kotlin"
+    rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user named "kotlindev"
-RUN useradd -m kotlindev && \
+RUN adduser --disabled-password --gecos "" kotlindev && \
     echo "kotlindev:kotlindev" | chpasswd && \
     adduser kotlindev sudo
 
 # Switch to the non-root user
 USER kotlindev
-
-# Set the user's home directory and the work directory
 ENV HOME /home/kotlindev
 WORKDIR $HOME
 
-# Set up SDKMAN and Kotlin for the kotlindev user
-RUN curl -s https://get.sdkman.io | bash && \
-    bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk install kotlin"
-
-# Any additional setup or installations can be added here...
+# Install SDKMAN and Kotlin as the kotlindev user
+RUN curl -s https://get.sdkman.io | bash
+SHELL ["/bin/bash", "-c"]
+RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install kotlin
 
 ENTRYPOINT [ "bash", "-c", "source $HOME/.sdkman/bin/sdkman-init.sh && kotlinc" ]
