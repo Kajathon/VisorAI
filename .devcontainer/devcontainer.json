@@ -17,7 +17,6 @@
             }
         }
     },
-    "remoteUser": "root",
     "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind,consistency=cached",
     "workspaceFolder": "/app",
     "mounts": [
