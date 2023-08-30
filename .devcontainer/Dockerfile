@@ -1,22 +1,13 @@
-# Use an official lightweight Python runtime as a parent image
-FROM openjdk:11-jre-slim
+# Use an official Ubuntu 22.04 as the base image
+FROM ubuntu:22.04
 
 # Set environment variables for non-interactive (non-tty) operation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install required packages, set locale, and clean up
 RUN apt-get update && \
-    apt-get install -y curl unzip zip locales git && \
+    apt-get install -y curl unzip zip git repo sudo openjdk-11-jdk && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    dpkg-reconfigure --frontend=noninteractive locales && \
-    update-locale LANG=en_US.UTF-8
-
-# Set environment variables for locale
-ENV LANG=en_US.UTF-8 \
-    LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8
+    rm -rf /var/lib/apt/lists/*
 
 # Add a new user and group 'kotlindev'
 RUN groupadd kotlindev && \
@@ -33,7 +24,7 @@ USER kotlindev
 WORKDIR /home/kotlindev
 
 # Install Kotlin using SDKMAN
-RUN bash -c "source $SDKMAN_DIR/bin/sdkman-init.sh && sdk install kotlin"
+RUN bash -c "source $SDKMAN_DIR/bin/sdkman-init.sh && sdk install kotlin && sdk install gradle"
 
 # Set the entrypoint to kotlin compiler
 ENTRYPOINT ["kotlinc"]
